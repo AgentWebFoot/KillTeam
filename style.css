@@ -50,6 +50,38 @@ input.name {
   white-space: nowrap; /* Prevent text from wrapping */
 }
 
+.weapon-name-title,
+.weapon-atk-title,
+.weapon-hit-title,
+.weapon-dmg-title,
+.weapon-wr-title{
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.weapon-name-title{
+  margin-left: 50px; /* Space between input fields within each profile */
+}
+
+.weapon-atk-title{
+  margin-left: 100px; /* Space between input fields within each profile */
+}
+
+.weapon-hit-title{
+  margin-left: 10px; /* Space between input fields within each profile */
+}
+
+.weapon-dmg-title{
+  margin-left: 10px; /* Space between input fields within each profile */
+}
+
+.weapon-wr-title{
+  margin-left: 10px; /* Space between input fields within each profile */
+}
+
 .icon {
   width: 32px;
   height: 16px;
@@ -60,6 +92,30 @@ input.name {
 
 .icon.hidden {
   display: none;
+}
+
+input.weapon-name {
+  min-width: 150px;
+  width: auto; /* Automatically adjust width */
+  max-width: 300px; /* Set a max width to prevent overflow */
+}
+
+input.weapon-wr {
+  min-width: 150px;
+  width: auto; /* Automatically adjust width */
+  max-width: 300px; /* Set a max width to prevent overflow */
+}
+
+input.weapon-atk{
+  margin-left: 100px; /* Space between input fields within each profile */
+}
+
+input.weapon-hit{
+  margin-left: 10px; /* Space between input fields within each profile */
+}
+
+input.weapon-dmg{
+  margin-left: 10px; /* Space between input fields within each profile */
 }
 
 .weapon-profile {
