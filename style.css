@@ -1,0 +1,93 @@
+input.apl,
+input.move,
+input.save,
+input.wounds,
+input.name {
+  color: #ffffff;
+  text-align: center;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 48px;
+  font-weight: 400;
+  position: absolute;
+  width: 100px; /* Adjust width as needed */
+  height: 50px; /* Adjust height as needed */
+  background: transparent; /* Match original background */
+  border: none; /* Remove input borders */
+  outline: none; /* Remove focus outline */
+  box-sizing: border-box; /* Match box-sizing with other elements */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Specific positioning for each field */
+input.apl {
+  left: 1002px; /* Pixel position for APL input */
+  top: 114px;   /* Pixel position for APL input */
+}
+input.move {
+  left: 1115px; /* Pixel position for MOVE input */
+  top: 114px;   /* Pixel position for MOVE input */
+}
+input.save {
+  left: 1230px; /* Pixel position for SAVE input */
+  top: 114px;   /* Pixel position for SAVE input */
+}
+input.wounds {
+  left: 1347px; /* Pixel position for WOUNDS input */
+  top: 114px;   /* Pixel position for WOUNDS input */
+}
+input.name {
+  font-family: "Inconsolata-ExtraBold", sans-serif;
+  font-size: 64px;
+  font-weight: 800;
+  line-height: 62px;
+  text-align: left;
+  left: 48px;  /* Pixel position for NAME input */
+  top: 33px;    /* Pixel position for NAME input */
+  width: auto; /* Start with auto width */
+  height: auto; /* Allow the height to adjust naturally */
+  white-space: nowrap; /* Prevent text from wrapping */
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.icon.hidden {
+  display: none;
+}
+
+.weapon-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.icon-select {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+button.remove-profile {
+  background-color: red;
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+button#add-weapon-profile {
+  margin-top: 10px;
+  background-color: green;
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 5px 15px;
+  font-size: 18px;
+}
