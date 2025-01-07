@@ -22,7 +22,7 @@ input.name {
 
 /* Specific positioning for each field */
 input.apl {
-  left: 1002px; /* Pixel position for APL input */
+  left: 1015px; /* Pixel position for APL input */
   top: 114px;   /* Pixel position for APL input */
 }
 input.move {
@@ -42,8 +42,8 @@ input.name {
   font-size: 64px;
   font-weight: 800;
   line-height: 62px;
-  text-align: left;
-  left: 48px;  /* Pixel position for NAME input */
+  text-align: right;
+  right: 950px;  /* Pixel position for NAME input */
   top: 33px;    /* Pixel position for NAME input */
   width: auto; /* Start with auto width */
   height: auto; /* Allow the height to adjust naturally */
