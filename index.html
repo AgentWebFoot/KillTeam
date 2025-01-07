@@ -48,13 +48,15 @@
     <input type="text" class="name name-input" value="NAME" />
   </div>
 
-  <div id="weapon-profile-titles" class="weapon-profile">
+  <div id="weapon-profile-titles" class="weapon-profile-titles">
     <div class="weapon-name-title">Name</div>
     <div class="weapon-atk-title">ATK</div>
     <div class="weapon-hit-title">HIT</div>
     <div class="weapon-dmg-title">DMG</div>
     <div class="weapon-wr-title">WR</div>
   </div>
+
+  <div class="divider"></div>
 
   <div id="weapon-profiles-container">
     <div class="weapon-profile">
@@ -132,6 +134,8 @@
     // Add remove functionality
     const removeButton = newProfile.querySelector(".remove-profile");
     removeButton.addEventListener("click", () => container.removeChild(newProfile));
+
+    
   }
 
   // Add event listener to the "Add" button
