@@ -25,7 +25,7 @@
     }
     
     input {
-      width: 100px; /* Adjust the width as needed */
+      width: 100px;
       padding: 5px;
       font-size: 16px;
       border: 1px solid #ccc;
@@ -33,90 +33,203 @@
     }
     
     .name-input {
-      width: 200px; /* Adjust for the name input size */
+      width: 200px;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
     }
   </style>
-  <title>Document</title>
+  <title>Kill Team Template</title>
 </head>
 <body>
-  <div class="desktop-1">
-    <img class="kill-team-top-1" src="kill-team-top-10.png" alt="Kill Team" />
-    <input type="number" class="apl" value="0" />
+  <div class="topHead">
+    <img class="kill-team-top" src="kill-team-top.png" alt="Kill Team" />
+    <input type="text" class="apl" value="0" />
     <input type="text" class="move" value="0" />
     <input type="text" class="save" value="0" />
-    <input type="number" class="wounds" value="0" />
+    <input type="text" class="wounds" value="0" />
     <input type="text" class="name name-input" value="NAME" />
   </div>
 
-  <div id="weapon-profile-titles" class="weapon-profile-titles">
-    <div class="weapon-name-title">Name</div>
-    <div class="weapon-atk-title">ATK</div>
-    <div class="weapon-hit-title">HIT</div>
-    <div class="weapon-dmg-title">DMG</div>
-    <div class="weapon-wr-title">WR</div>
-  </div>
-
-  <div class="divider"></div>
-
-  <div id="weapon-profiles-container">
-    <div class="weapon-profile">
-      <!-- Icon Selection -->
-      <div class="icon-select">
-        <img class="icon melee" src="melee-icon.png" alt="Melee Icon" />
-        <img class="icon ranged hidden" src="ranged-icon.png" alt="Ranged Icon" />
-      </div>
-      <!-- Weapon Details -->
-      <input type="text" class="weapon-name" placeholder="Weapon Name" />
-      <input type="number" class="weapon-atk" placeholder="ATK" />
-      <input type="number" class="weapon-hit" placeholder="HIT" />
-      <input type="text" class="weapon-dmg" placeholder="DMG" />
-      <input type="text" class="weapon-wr" placeholder="WR" />
-      <!-- Remove Button -->
-      <button class="remove-profile">X</button>
+  <!-- Page 1 -->
+  <div id="page1" class="page active">
+    <div id="weapon-profile-titles" class="weapon-profile-titles">
+      <div class="weapon-name-title">Name</div>
+      <div class="weapon-atk-title">ATK</div>
+      <div class="weapon-hit-title">HIT</div>
+      <div class="weapon-dmg-title">DMG</div>
+      <div class="weapon-wr-title">WR</div>
     </div>
+
+    <div class="divider"></div>
+
+    <div id="weapon-profiles-container">
+      <div class="weapon-profile">
+        <!-- Icon Selection -->
+        <div class="icon-select">
+          <img class="icon ranged" src="ranged-icon.png" alt="Ranged Icon" />
+          <img class="icon melee hidden" src="melee-icon.png" alt="Melee Icon" />
+        </div>
+        <!-- Weapon Details -->
+        <input type="text" class="weapon-name" placeholder="Weapon Name" />
+        <input type="text" class="weapon-atk" placeholder="ATK" />
+        <input type="text" class="weapon-hit" placeholder="HIT" />
+        <input type="text" class="weapon-dmg" placeholder="DMG" />
+        <input type="text" class="weapon-wr" placeholder="WR" />
+        <!-- Remove Button -->
+        <button class="remove-profile">X</button>
+      </div>
+    </div>
+    <!-- Add New Weapon Profile Button -->
+    <button id="add-weapon-profile">+</button>
+    <div class="divider2"></div>
   </div>
-  <!-- Add New Weapon Profile Button -->
-  <button id="add-weapon-profile">+</button>
-  
-  
+
+  <div id="pages-container">
+    <!-- Pages will be dynamically added here -->
+  </div>
+
 </body>
+
 <footer class="footer">
-  <button id="button-a" class="footer-btn">Button A</button>
-  <button id="button-b" class="footer-btn">Button B</button>
+  <button id="prev-page-btn" class="footer-btn">Previous Page</button>
+  <button id="add-ability-btn" class="footer-btn">Add Ability</button>
+  <button id="next-page-btn" class="footer-btn">Next Page</button>
+  <button id="button-a" class="footer-btn">Save Statblock</button>
+  <button id="button-b" class="footer-btn">Upload Statblock</button>
+  <button id="button-c" class="footer-btn">Toggle Add/Remove</button>
+  <button id="button-d" class="footer-btn">Capture Statblock</button>
 </footer>
-</html>
 
 <script>
+let pages = [];
+const maxAbilitiesPerPage = 2;
+
+function createAbilitySection() {
+  // Create ability section container
+  const abilitySection = document.createElement("div");
+  abilitySection.className = "ability-section";
+
+  // Title input
+  const titleInput = document.createElement("input");
+  titleInput.type = "text";
+  titleInput.className = "ability-title";
+  titleInput.placeholder = "Ability Title";
+
+  // Description textarea
+  const descriptionTextarea = document.createElement("textarea");
+  descriptionTextarea.className = "ability-description";
+  descriptionTextarea.placeholder = "Ability Description";
+
+  // Remove button
+  const removeButton = document.createElement("button");
+  removeButton.className = "remove-ability-btn";
+  removeButton.textContent = "Remove Ability";
+
+  // Remove button functionality
+  removeButton.addEventListener("click", () => {
+    const parentPage = abilitySection.parentElement;
+    parentPage.removeChild(abilitySection);
+
+    // Check if the page is empty after removal
+    if (parentPage.childElementCount === 0) {
+      const pageIndex = Array.from(document.querySelectorAll(".page")).indexOf(
+        parentPage
+      );
+      pages.splice(pageIndex, 1);
+      parentPage.remove();
+      updatePageNavigation();
+    }
+  });
+
+  // Append elements to ability section
+  abilitySection.appendChild(titleInput);
+  abilitySection.appendChild(descriptionTextarea);
+  abilitySection.appendChild(removeButton);
+
+  return abilitySection;
+}
+
+function addAbility() {
+  // Create a new ability section
+  const newAbility = createAbilitySection();
+
+  // Find the last page or create a new one
+  let lastPage = pages[pages.length - 1];
+  if (!lastPage || lastPage.childElementCount >= maxAbilitiesPerPage) {
+    const newPage = document.createElement("div");
+    newPage.className = "page";
+    document.getElementById("pages-container").appendChild(newPage);
+    pages.push(newPage);
+    lastPage = newPage;
+  }
+
+  // Add the ability to the last page
+  lastPage.appendChild(newAbility);
+
+  // Update page navigation
+  updatePageNavigation();
+}
+
+function updatePageNavigation() {
+  // Hide all pages except the first visible one
+  pages.forEach((page, index) => {
+    page.style.display = index === 0 ? "flex" : "none";
+  });
+}
+
+// Add functionality to buttons
+document.getElementById("add-ability-btn").addEventListener("click", addAbility);
+document.getElementById("prev-page-btn").addEventListener("click", () => {
+  const currentPageIndex = pages.findIndex(
+    (page) => page.style.display === "flex"
+  );
+  if (currentPageIndex > 0) {
+    pages[currentPageIndex].style.display = "none";
+    pages[currentPageIndex - 1].style.display = "flex";
+  }
+});
+
+document.getElementById("next-page-btn").addEventListener("click", () => {
+  const currentPageIndex = pages.findIndex(
+    (page) => page.style.display === "flex"
+  );
+  if (currentPageIndex < pages.length - 1) {
+    pages[currentPageIndex].style.display = "none";
+    pages[currentPageIndex + 1].style.display = "flex";
+  }
+});
+
   // Function to toggle between melee and ranged icons
   function toggleIcon(event) {
-    const parent = event.target.parentElement; // Get the icon-select container
-    const meleeIcon = parent.querySelector(".melee");
+    const parent = event.target.parentElement;
     const rangedIcon = parent.querySelector(".ranged");
+    const meleeIcon = parent.querySelector(".melee");
 
-    // Toggle visibility
-    if (event.target.classList.contains("melee")) {
-      meleeIcon.classList.add("hidden");
-      rangedIcon.classList.remove("hidden");
-    } else if (event.target.classList.contains("ranged")) {
+    if (event.target.classList.contains("ranged")) {
       rangedIcon.classList.add("hidden");
       meleeIcon.classList.remove("hidden");
+    } else if (event.target.classList.contains("melee")) {
+      meleeIcon.classList.add("hidden");
+      rangedIcon.classList.remove("hidden");
     }
   }
 
   // Function to add a new weapon profile
   function addWeaponProfile() {
     const container = document.getElementById("weapon-profiles-container");
-    const profileCount = container.children.length + 1;
-
-    // Create new profile
     const newProfile = document.createElement("div");
     newProfile.className = "weapon-profile";
 
-    // Inner HTML for profile
     newProfile.innerHTML = `
       <div class="icon-select">
-        <img class="icon melee" src="melee-icon.png" alt="Melee Icon" />
-        <img class="icon ranged hidden" src="ranged-icon.png" alt="Ranged Icon" />
+        <img class="icon ranged" src="ranged-icon.png" alt="Ranged Icon" />
+        <img class="icon melee hidden" src="melee-icon.png" alt="Melee Icon" />
       </div>
       <input type="text" class="weapon-name" placeholder="Weapon Name" />
       <input type="number" class="weapon-atk" placeholder="ATK" />
@@ -126,27 +239,21 @@
       <button class="remove-profile">X</button>
     `;
 
-    // Append new profile to the container
     container.appendChild(newProfile);
 
-    // Add event listener to the new icons
-    const meleeIcon = newProfile.querySelector(".melee");
     const rangedIcon = newProfile.querySelector(".ranged");
-    meleeIcon.addEventListener("click", toggleIcon);
+    const meleeIcon = newProfile.querySelector(".melee");
     rangedIcon.addEventListener("click", toggleIcon);
+    meleeIcon.addEventListener("click", toggleIcon);
 
-    // Add remove functionality
     const removeButton = newProfile.querySelector(".remove-profile");
     removeButton.addEventListener("click", () => container.removeChild(newProfile));
-
-    
   }
 
-  // Add event listener to the "Add" button
   document.getElementById("add-weapon-profile").addEventListener("click", addWeaponProfile);
 
-  // Initialize toggle functionality for existing profile
   document.querySelectorAll(".weapon-profile .melee, .weapon-profile .ranged").forEach(icon => {
     icon.addEventListener("click", toggleIcon);
   });
 </script>
+</html>
