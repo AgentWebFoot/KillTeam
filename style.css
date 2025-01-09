@@ -70,40 +70,36 @@ input.name {
   display: flex; /* Show only the active page */
 }
 
-.ability-section {
+.title-container {
   display: flex;
-  flex-direction: column; /* Ensure the title and description are stacked */
-  width: 45%; /* Ensure two fit side-by-side on a page */
-  min-width: 200px; /* Optional: Set a minimum width for smaller screens */
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
 }
 
-.ability-section input, 
-.ability-section textarea {
+.ability-title {
+  flex: 1;
+  margin-right: 8px;
+}
+
+.ability-description {
   width: 100%;
-  margin-top: 5px;
-}
-
-textarea {
+  height: 60px;
   resize: none;
-  height: 100px;
 }
 
 .remove-ability-btn {
-  margin-top: 10px;
-  padding: 5px 10px;
-  background-color: #ff4d4d;
-  color: white;
-  border: none;
-  border-radius: 3px;
   cursor: pointer;
-}
-
-.remove-ability-btn:hover {
-  background-color: #ff1a1a;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 0;
 }
 
 .weapon-name-title,

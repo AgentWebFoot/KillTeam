@@ -102,10 +102,10 @@
   <button id="prev-page-btn" class="footer-btn">Previous Page</button>
   <span id="page-number-display" class="page-number-display">Page 1 of 1</span>
   <button id="next-page-btn" class="footer-btn">Next Page</button>
-  <button id="button-a" class="footer-btn">Save Statblock</button>
-  <button id="button-b" class="footer-btn">Upload Statblock</button>
-  <button id="button-c" class="footer-btn">Toggle Add/Remove</button>
-  <button id="button-d" class="footer-btn">Capture Statblock</button>
+  <button id="save-button" class="footer-btn">Save Statblock</button>
+  <button id="upload-button" class="footer-btn">Upload Statblock</button>
+  <button id="toggle-button" class="footer-btn">Toggle Add/Remove</button>
+  <button id="capture-button" class="footer-btn">Capture Statblock</button>
 </footer>
 
 <script>
@@ -117,41 +117,55 @@ function createAbilitySection() {
   const abilitySection = document.createElement("div");
   abilitySection.className = "ability-section";
 
+  // Create container for title and remove button
+  const titleContainer = document.createElement("div");
+  titleContainer.className = "title-container";
+
   // Title input
   const titleInput = document.createElement("input");
   titleInput.type = "text";
   titleInput.className = "ability-title";
   titleInput.placeholder = "Ability Title";
 
+  // Remove button
+  const removeButton = document.createElement("button");
+  removeButton.className = "remove-ability-btn";
+  removeButton.textContent = "X";
+
+  // Append title and remove button to title container
+  titleContainer.appendChild(titleInput);
+  titleContainer.appendChild(removeButton);
+
   // Description textarea
   const descriptionTextarea = document.createElement("textarea");
   descriptionTextarea.className = "ability-description";
   descriptionTextarea.placeholder = "Ability Description";
 
-  // Remove button
-  const removeButton = document.createElement("button");
-  removeButton.className = "remove-ability-btn";
-  removeButton.textContent = "Remove Ability";
-
   // Remove button functionality
   removeButton.addEventListener("click", () => {
-  const parentPage = abilitySection.parentElement;
-  parentPage.removeChild(abilitySection);
+    const parentPage = abilitySection.parentElement;
+    parentPage.removeChild(abilitySection);
 
-  if (parentPage.childElementCount === 0) {
-    const pageIndex = Array.from(document.querySelectorAll(".page")).indexOf(parentPage);
-    pages.splice(pageIndex, 1);
-    parentPage.remove();
-    updatePageNavigation(); // Update navigation when a page is removed
-  } else {
-    updatePageNavigation(); // Update navigation when abilities are removed
-  }
-});
+    // Check if the parent page is empty
+    if (parentPage.childElementCount === 0) {
+      // Find the index of the parent page in the `pages` array
+      const pageIndex = pages.indexOf(parentPage);
 
-  // Append elements to ability section
-  abilitySection.appendChild(titleInput);
+      // Ensure the first page is never removed
+      if (pageIndex > 0) {
+        // Remove the page from the DOM and the `pages` array
+        parentPage.remove();
+        pages.splice(pageIndex, 1);
+      }
+    }
+
+    // Update page navigation and ensure proper syncing
+    updatePageNavigation();
+  });
+
+  // Append title container and description to ability section
+  abilitySection.appendChild(titleContainer);
   abilitySection.appendChild(descriptionTextarea);
-  abilitySection.appendChild(removeButton);
 
   return abilitySection;
 }
@@ -188,9 +202,15 @@ function addAbility() {
   updatePageNavigation(); // Update navigation to reflect the current state
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  updatePageNavigation();
-});
+function updatePageNavigation() {
+  const pageNumberDisplay = document.getElementById("page-number-display");
+
+  // Update the page number display for the first visible page
+  const activePageIndex = pages.findIndex((page) => page.style.display === "block");
+  const currentPageIndex = activePageIndex !== -1 ? activePageIndex : 0;
+
+  pageNumberDisplay.textContent = `Page ${currentPageIndex + 1} of ${pages.length}`;
+}
 
 function updatePageNavigation() {
   const pageNumberDisplay = document.getElementById("page-number-display");
@@ -282,5 +302,110 @@ document.getElementById("next-page-btn").addEventListener("click", () => {
   document.querySelectorAll(".weapon-profile .melee, .weapon-profile .ranged").forEach(icon => {
     icon.addEventListener("click", toggleIcon);
   });
+
+  document.getElementById("save-button").addEventListener("click", saveStatblock);
+
+function saveStatblock() {
+  // Gather data
+  const statblock = {
+    apl: document.querySelector(".apl").value,
+    move: document.querySelector(".move").value,
+    save: document.querySelector(".save").value,
+    wounds: document.querySelector(".wounds").value,
+    name: document.querySelector(".name-input").value,
+    weapons: Array.from(document.querySelectorAll(".weapon-profile")).map(profile => ({
+      name: profile.querySelector(".weapon-name").value,
+      atk: profile.querySelector(".weapon-atk").value,
+      hit: profile.querySelector(".weapon-hit").value,
+      dmg: profile.querySelector(".weapon-dmg").value,
+      wr: profile.querySelector(".weapon-wr").value,
+      type: profile.querySelector(".ranged").classList.contains("hidden") ? "melee" : "ranged"
+    })),
+    abilities: pages.map(page => 
+      Array.from(page.querySelectorAll(".ability-section")).map(section => ({
+        title: section.querySelector(".ability-title").value,
+        description: section.querySelector(".ability-description").value
+      }))
+    )
+  };
+
+  // Convert to JSON string
+  const jsonString = JSON.stringify(statblock, null, 2);
+
+  // Create a Blob
+  const blob = new Blob([jsonString], { type: "application/json" });
+
+  // Create an anchor and trigger download
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `${statblock.name || "statblock"}.json`;
+  a.click();
+}
+
+document.getElementById("upload-button").addEventListener("click", () => {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "application/json";
+  
+  input.addEventListener("change", event => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const data = JSON.parse(reader.result);
+
+        // Populate fields
+        document.querySelector(".apl").value = data.apl || "";
+        document.querySelector(".move").value = data.move || "";
+        document.querySelector(".save").value = data.save || "";
+        document.querySelector(".wounds").value = data.wounds || "";
+        document.querySelector(".name-input").value = data.name || "";
+
+        // Populate weapons
+        const weaponContainer = document.getElementById("weapon-profiles-container");
+        weaponContainer.innerHTML = ""; // Clear existing profiles
+        data.weapons.forEach(weapon => {
+          const newProfile = document.createElement("div");
+          newProfile.className = "weapon-profile";
+          newProfile.innerHTML = `
+            <div class="icon-select">
+              <img class="icon ranged ${weapon.type === "melee" ? "hidden" : ""}" src="ranged-icon.png" alt="Ranged Icon" />
+              <img class="icon melee ${weapon.type === "ranged" ? "hidden" : ""}" src="melee-icon.png" alt="Melee Icon" />
+            </div>
+            <input type="text" class="weapon-name" value="${weapon.name}" />
+            <input type="text" class="weapon-atk" value="${weapon.atk}" />
+            <input type="text" class="weapon-hit" value="${weapon.hit}" />
+            <input type="text" class="weapon-dmg" value="${weapon.dmg}" />
+            <input type="text" class="weapon-wr" value="${weapon.wr}" />
+            <button class="remove-profile">X</button>
+          `;
+          weaponContainer.appendChild(newProfile);
+        });
+
+        // Populate abilities
+        pages.forEach(page => page.innerHTML = ""); // Clear all pages
+        data.abilities.forEach((abilities, index) => {
+          const page = pages[index] || document.createElement("div");
+          page.className = "page";
+          abilities.forEach(ability => {
+            const abilitySection = createAbilitySection();
+            abilitySection.querySelector(".ability-title").value = ability.title;
+            abilitySection.querySelector(".ability-description").value = ability.description;
+            page.appendChild(abilitySection);
+          });
+          if (!pages[index]) {
+            pages.push(page);
+            document.getElementById("pages-container").appendChild(page);
+          }
+        });
+
+        updatePageNavigation(); // Refresh navigation
+      };
+      reader.readAsText(file);
+    }
+  });
+
+  input.click();
+});
 </script>
 </html>
